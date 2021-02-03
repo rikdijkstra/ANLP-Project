@@ -1,3 +1,3 @@
 # Advanced Natural Language Processing
-## Course project for Msc. Artificial Intelligence
+Course project for Msc. Artificial Intelligence
 
