@@ -6,7 +6,7 @@ from nltk.corpus import stopwords
 
 nltk.download('punkt')
 nltk.download('stopwords')
-
+nltk.download('averaged_perceptron_tagger')
 
 
 
@@ -52,15 +52,30 @@ def generate_dictionary(text):
 
     return word_to_index, index_to_word, corpus, vocab_size, length_of_corpus
 
+def is_in(word, li):
+    for w in li:
+        if w == word:
+            return True
+    return False
+
+def hasNumbers(inputString):
+    return bool(re.search(r'\d', inputString))
+
 stop_words = set(stopwords.words("english"))
 stop_word_list = []
 for w in stop_words:
     stop_word_list.append(w)
 print(stop_words)
 
-punc_string = "! \" # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \\ ] ^ _ ` { | } ~ .. ... !!! !!!! ?? ???"
+punc_string = "! \" # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \\ ] ^ _ ` { | } ~ .. ... !!! !!!! ?? ??? … “ ” ’ —"
 punc_list = punc_string.split(" ")
+punc_list.append("....")
+punc_list.append(".....")
+punc_list.append("......")
+punc_list.append("``")
+
 print(punc_list)
+
 
 
 
@@ -74,7 +89,7 @@ sentences = []
 sentences_clean = []
 words = []
 words_clean = []
-
+POS_tags = []
 
 for index, row in trumpdf.iterrows():
     tweets.append(row['content'])
@@ -83,15 +98,27 @@ for index, row in trumpdf2.iterrows():
 
 for tweet in tweets:
     tweet = remove_URL(tweet)
+    encoded_string = tweet.encode("ascii", "ignore")
+    decode_string = encoded_string.decode()
+    tweet = decode_string
     sentences.append(nltk.sent_tokenize(tweet))
-    words.append(nltk.word_tokenize(tweet))
+    tempTokenizedWords = nltk.word_tokenize(tweet)
+    words.append(tempTokenizedWords)
 
 
-for word in words:
-    if word in stop_word_list or word in punc_list:
-        print(word)
+for sentence in words:
+    s = []
+    for word in sentence:
+        if not word in stop_words and not word in punc_list and not hasNumbers(word):
+            # print("Stopword or punc: ", words
+            w = word.lower()
+            s.append(w)
+    words_clean.append(s)
+    POS_tags.append(nltk.pos_tag(s))
 
-    if word not in stop_word_list and word not in punc_list:
-        words_clean.append(word)
+
 # word_to_index, index_to_word, corpus, vocab_size, length_of_corpus = generate_dictionary(tweets_clean)
 
+
+
+print(POS_tags)
